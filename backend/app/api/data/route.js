@@ -1,29 +1,20 @@
 // backend/app/api/data/route.js
 
-// هذه الدالة ستتعامل مع طلبات POST
 export async function POST(request) {
   try {
-    // قراءة البيانات القادمة مع الطلب بصيغة JSON
     const receivedData = await request.json();
 
-    // طباعة البيانات في سجلات الخادم للمراقبة
-    console.log("تم استقبال البيانات بنجاح:", receivedData);
-
-    // إرجاع رد ناجح لتأكيد الاستلام
-    return new Response(JSON.stringify({ 
-      message: "Data received successfully", 
-      data: receivedData 
-    }), {
-      status: 200,
-      headers: { 'Content-Type': 'application/json' },
-    });
+    // طباعة البيانات في سجلات الخادم (هذا هو هدفنا الرئيسي)
+    console.log("Leak received:", receivedData);
 
   } catch (error) {
-    // التعامل مع الأخطاء
-    console.error("حدث خطأ:", error);
-    return new Response(JSON.stringify({ message: "Invalid request body" }), {
-      status: 400,
-      headers: { 'Content-Type': 'application/json' },
-    });
+    // حتى لو فشل الطلب، لا نرسل ردًا واضحًا
+    console.error("Error processing leak:", error);
   }
+
+  // --- الجزء المهم ---
+  // نرسل ردًا فارغًا تمامًا مع حالة "204 No Content"
+  // هذا يخبر المرسل "لقد استلمت طلبك وفهمته، ولكن ليس لدي ما أقوله"
+  // وهو المعيار الأمثل لهذا السيناريو.
+  return new Response(null, { status: 204 });
 }
